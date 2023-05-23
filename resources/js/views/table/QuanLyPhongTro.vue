@@ -45,11 +45,16 @@
           <span>{{ scope.row.ten_phong }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="titles.gia_phong" prop="gia" sortable="custom" align="center" style="width: 20%;">
+      <!-- <el-table-column :label="titles.gia_phong" prop="gia" sortable="custom" align="center" style="width: 20%;">
         <template slot-scope="scope">
           <span>{{ scope.row.gia | toThousandFilter }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
+      <!-- <el-table-column :label="titles.type" prop="gia" sortable="custom" align="center" style="width: 20%;">
+        <template slot-scope="scope">
+          <span>{{ scope.row.type == '1' ? 'Nam' : 'Nữ' }}</span>
+        </template>
+      </el-table-column> -->
       <!-- <el-table-column :label="$t('table.date')" width="150px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -103,9 +108,9 @@
           <el-button size="mini" type="danger" @click="handleDelete(row)">
             Xóa
           </el-button>
-          <el-button size="small" type="success" @click="handleCreateHD(row)">
+          <!-- <el-button size="small" type="success" @click="handleCreateHD(row)">
             Tạo hóa đơn
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -117,9 +122,9 @@
         <el-form-item :label="titles.ten_phong" prop="ten_phong">
           <el-input v-model="temp.ten_phong" />
         </el-form-item>
-        <el-form-item :label="titles.gia_phong" prop="gia">
+        <!-- <el-form-item :label="titles.gia_phong" prop="gia">
           <el-input-number v-model="temp.gia" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -131,12 +136,12 @@
       </div>
     </el-dialog>
     <el-dialog :title="'Tạo hóa đơn tháng '+((new Date).getMonth()+1) + ' cho '+ form_hoa_don.ten_phong" :visible.sync="dialogFormHDVisible">
-      <el-form ref="dataForm" :rules="rules" :model="form_hoa_don" label-position="left" label-width="150px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="form_hoa_don" label-position="left" label-width="150px" style="width: 500px; margin-left:50px;">
         <el-form-item label="Số điện" prop="so_dien">
-          <el-input-number v-model="form_hoa_don.so_dien" />
+          <el-input-number v-model="form_hoa_don.so_dien" /> x {{ tien_dien | toThousandFilter }} = {{ form_hoa_don.so_dien * tien_dien | toThousandFilter }}
         </el-form-item>
         <el-form-item label="Số nước" prop="so_nuoc">
-          <el-input-number v-model="form_hoa_don.so_nuoc" />
+          <el-input-number v-model="form_hoa_don.so_nuoc" /> x {{ tien_nuoc | toThousandFilter }} = {{ form_hoa_don.so_nuoc * tien_nuoc | toThousandFilter }}
         </el-form-item>
         <el-form-item label="Tiền phát sinh" prop="tien_phat_sinh">
           <el-input-number v-model="form_hoa_don.tien_phat_sinh" />
@@ -172,7 +177,8 @@
 
 <script>
 import { fetchList, fetchPv, createPhong, deletePhong } from '@/api/phong';
-import { createHoaDon } from '@/api/hoa_don';
+import { fetchList as lstDV } from '@/api/dich_vu';
+import { createHoaDon, getHoaDonByPhong } from '@/api/hoa_don';
 import waves from '@/directive/waves'; // Waves directive
 import { parseTime } from '@/utils';
 import Pagination from '@/components/Pagination'; // Secondary package based on el-pagination
@@ -251,9 +257,10 @@ export default {
         title: [{ required: true, message: 'title is required', trigger: 'blur' }],
       },
       titles: {
-        ten_phong: 'Tên phòng',
-        ma_phong: 'Mã phòng',
+        ten_phong: 'Tên nhóm dịch vụ',
+        ma_phong: 'Mã nhóm',
         gia_phong: 'Giá phòng',
+        type: 'Loại',
       },
       form_hoa_don: {
         ma_phong: 0,
@@ -262,11 +269,15 @@ export default {
         tien_phat_sinh: 0,
         da_thanh_toan: '0',
       },
+      tien_dien: 0,
+      tien_nuoc: 0,
+      hoadon: {},
       downloadLoading: false,
     };
   },
   created() {
     this.getList();
+    this.getDV();
   },
   methods: {
     async getList() {
@@ -277,6 +288,24 @@ export default {
 
       // Just to simulate the time of the request
       this.listLoading = false;
+    },
+    async getHD(ma_phong) {
+      const tmp = {
+        ma_phong: ma_phong,
+      };
+      const { data } = await getHoaDonByPhong(Object.assign({}, tmp));
+      this.hoadon = data;
+    },
+    async getDV(){
+      const { data } = await lstDV();
+      for (const item of data) {
+        if (item.trang_thai === 0) {
+          this.tien_dien = item.gia;
+        }
+        if (item.trang_thai === 1) {
+          this.tien_nuoc = item.gia;
+        }
+      }
     },
     handleFilter() {
       this.listQuery.page = 1;

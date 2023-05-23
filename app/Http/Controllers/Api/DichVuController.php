@@ -38,8 +38,12 @@ class DichVuController extends BaseController
             $query = DichVu::find($searchParams['id']);
         }
         else{
-
-            $query = DichVu::all()->toArray();
+            if(isset($searchParams['search'])) {
+                // dd($searchParams['search']);
+                $query = DichVu::where('ten_dich_vu','like', '%'.$searchParams['search'].'%')->get()->toArray();
+            }
+            else
+                $query = DichVu::all()->toArray();
             // dd($query);
         }
 
@@ -49,6 +53,9 @@ class DichVuController extends BaseController
     public function store(Request $request) {
         $id = $request->get("id","");
         $ten = $request->get("ten_dich_vu","");
+        $gia = $request->get("gia",0);
+        $gia_khuyen_mai = $request->get("gia_khuyen_mai",0);
+        $ten_khuyen_mai = $request->get("ten_khuyen_mai",'');
         $gia = $request->get("gia",0);
         $trang_thai = $request->get("trang_thai","1");
         // dd($ten,$gia,$request->all());
@@ -61,11 +68,13 @@ class DichVuController extends BaseController
                 $model->ten_dich_vu = $ten;
                 $model->gia = $gia;
                 $model->trang_thai = $trang_thai;
+                $model->ten_khuyen_mai = $ten_khuyen_mai;
+                $model->gia_khuyen_mai = $gia_khuyen_mai;
                 $model->save();
                 return response()->json(['message' => "Thành công !","success" => true,"id"=> $model->id]);
             }
             else {
-                $query = DichVu::where('id',$id)->update(['ten_dich_vu' => $ten,'gia'=>$gia, 'trang_thai' => $trang_thai]);
+                $query = DichVu::where('id',$id)->update(['ten_dich_vu' => $ten,'gia'=>$gia, 'trang_thai' => $trang_thai, 'ten_khuyen_mai' => $ten_khuyen_mai,'gia_khuyen_mai' => $gia_khuyen_mai,]);
             }
 
             return response()->json(['message' => "Thành công !","success" => true]);

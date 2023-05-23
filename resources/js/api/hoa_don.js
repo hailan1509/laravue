@@ -8,6 +8,14 @@ export function fetchList(query) {
   });
 }
 
+export function getHoaDonByPhong(query) {
+  return request({
+    url: '/HoaDon/getHoaDonByPhong',
+    method: 'get',
+    params: query,
+  });
+}
+
 export function fetchArticle(id) {
   return request({
     url: '/articles/' + id,

@@ -5,6 +5,8 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         {{ $t('table.add') }}
       </el-button>
+      <br>
+      <el-input v-model="listQuery.search" style="width : 50%" placeholder="Tìm kiếm theo tên dịch vụ" />
 
     </div>
 
@@ -33,6 +35,21 @@
           <span>{{ scope.row.gia | toThousandFilter }}</span>
         </template>
       </el-table-column>
+      <el-table-column :label="titles.trang_thai" prop="trang_thai" sortable="custom" align="center" style="width: 20%;">
+        <template slot-scope="scope">
+          <span>{{ scope.row.trang_thai == '1' ? 'Hiện' : 'Ẩn' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="titles.ten_khuyen_mai" prop="ten_khuyen_mai" sortable="custom" align="center" style="width: 40%;">
+        <template slot-scope="scope">
+          <span>{{ scope.row.ten_khuyen_mai }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="titles.gia_khuyen_mai" prop="gia_khuyen_mai" sortable="custom" align="center" style="width: 40%;">
+        <template slot-scope="scope">
+          <span>{{ scope.row.gia_khuyen_mai ? scope.row.gia_khuyen_mai + '%' : '' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" style="width: 30%;" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -57,11 +74,15 @@
         </el-form-item>
         <el-form-item :label="titles.trang_thai" prop="trang_thai">
           <el-select v-model="temp.trang_thai" placeholder="Trạng thái">
-            <el-option label="Tiền điện" value="0" />
-            <el-option label="Tiền nước" value="1" />
-            <el-option label="Theo phòng" value="2" />
-            <el-option label="Theo số người" value="3" />
+            <el-option label="Ẩn" value="0" />
+            <el-option label="Hiện" value="1" />
           </el-select>
+        </el-form-item>
+        <el-form-item :label="titles.ten_khuyen_mai" prop="ten_khuyen_mai">
+          <el-input v-model="temp.ten_khuyen_mai" />
+        </el-form-item>
+        <el-form-item :label="titles.gia_khuyen_mai" prop="gia_khuyen_mai">
+          <el-input-number v-model="temp.gia_khuyen_mai" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -119,6 +140,7 @@ export default {
         title: undefined,
         type: undefined,
         sort: '+id',
+        search: '',
       },
       temp: {
         id: undefined,
@@ -146,16 +168,24 @@ export default {
         ten_dich_vu: 'Tên dịch vụ',
         id: 'Mã dịch vụ',
         gia: 'Giá dịch vụ',
+        ten_khuyen_mai: 'Tên khuyến mại',
+        gia_khuyen_mai: 'Giá khuyến mại',
         trang_thai: 'Trạng thái',
       },
       loai_dich_vu: {
-        0: 'Tiền điện',
-        1: 'Tiền nước',
-        2: 'Theo phòng',
-        3: 'Theo số người',
+        0: 'Ẩn',
+        1: 'Hiện',
       },
       downloadLoading: false,
     };
+  },
+  watch: {
+    'listQuery.search': {
+      handler: function() {
+        this.getList();
+      },
+      immediate: true,
+    },
   },
   created() {
     this.getList();
@@ -200,6 +230,8 @@ export default {
         id: undefined,
         gia: 0,
         ten_dich_vu: '',
+        ten_khuyen_mai: '',
+        gia_khuyen_mai: 0,
         trang_thai: '1',
       };
     },

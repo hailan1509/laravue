@@ -14,7 +14,7 @@ use App\Http\Resources\UserResource;
 use App\Laravue\JsonResponse;
 use App\Laravue\Models\Permission;
 use App\Laravue\Models\Role;
-use App\Laravue\Models\Phong;
+use App\Laravue\Models\KhachHang;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Arr;
@@ -27,7 +27,7 @@ use Validator;
  *
  * @package App\Http\Controllers\Api
  */
-class PhongController extends BaseController
+class KhachHangController extends BaseController
 {
     
     public function index(Request $request)
@@ -35,12 +35,14 @@ class PhongController extends BaseController
         $searchParams = $request->all();
         $query = [];
         if(isset($searchParams['id'])) {
-            $query = Phong::find($searchParams['id']);
+            $query = KhachHang::find($searchParams['id']);
         }
         else{
-
-            $query = Phong::all()->toArray();
-            // dd($query);
+            if(isset($searchParams['search'])) {
+                $query = KhachHang::where('ten','like', '%'.$searchParams['search'].'%')->get()->toArray();
+            }
+            else
+                $query = KhachHang::all()->toArray();
         }
 
         return response()->json(['data' => $query], 200);
@@ -58,7 +60,7 @@ class PhongController extends BaseController
 
             if(empty($id)) {
                 // $query = Phong::insert(['ten_phong'=>$ten,'gia'=>$gia]);
-                $model = new Phong;
+                $model = new KhachHang;
                 $model->ten_phong = $ten;
                 $model->gia = $gia;
                 $model->type = $type;
@@ -66,7 +68,7 @@ class PhongController extends BaseController
                 return response()->json(['message' => "Thành công !","success" => true,"id"=> $model->id]);
             }
             else {
-                $query = Phong::where('id',$id)->update(['ten_phong' => $ten,'gia'=>$gia]);
+                $query = KhachHang::where('id',$id)->update(['ten_phong' => $ten,'gia'=>$gia]);
             }
 
             return response()->json(['message' => "Thành công !","success" => true]);
@@ -80,7 +82,7 @@ class PhongController extends BaseController
         $id = $request->get("id","");
         try{
             if(!empty($id)) {
-                $query = Phong::where('id',$id)->delete();
+                $query = KhachHang::where('id',$id)->delete();
             }
             return response()->json(['message' => "Thành công !","success" => true]);
         }catch (\Exception $ex) {

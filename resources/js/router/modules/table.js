@@ -36,10 +36,16 @@ const tableRoutes = {
       meta: { title: 'Quản lý dịch vụ' },
     },
     {
-      path: 'quan-ly-hop-dong',
+      path: 'quan-ly-hoa-don',
       component: () => import('@/views/table/QuanLyHopDong'),
       name: 'QuanLyHopDong',
-      meta: { title: 'Quản lý hợp đồng' },
+      meta: { title: 'Quản lý hóa đơn' },
+    },
+    {
+      path: 'tao-hoa-don',
+      component: () => import('@/views/table/TaoHoaDon'),
+      name: 'TaoHoaDon',
+      meta: { title: 'Tạo hóa đơn' },
     },
   ],
 };

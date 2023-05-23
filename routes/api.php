@@ -50,8 +50,10 @@ Route::namespace('Api')->group(function() {
     Route::post('/HopDong/addOrEdit','HopDongController@store' );
     Route::post('/HopDong/delete','HopDongController@delete' );
     Route::get('/HoaDon/list','HoaDonController@index' );
+    Route::get('/HoaDon/getHoaDonByPhong','HoaDonController@getHoaDonByPhong' );
     Route::post('/HoaDon/addOrEdit','HoaDonController@store' );
     Route::post('/HoaDon/delete','HoaDonController@delete' );
+    Route::get('/khachhang/list','KhachHangController@index' );
 });
 
 
