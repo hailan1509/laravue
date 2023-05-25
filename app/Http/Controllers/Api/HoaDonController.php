@@ -36,21 +36,26 @@ class HoaDonController extends BaseController
         else{
             $date = $searchParams['date'];
             $month = $searchParams['month'];
-            $query = HoaDon::select(['hoadon.*']);
-            if(!empty($date)) {
-                $query->whereDate('created_at', $date);
+            $phone = $searchParams['phone'];
+            $query = HoaDon::select(['hoa_don.*']);
+            if($month) {
+                $arr_date = explode('/',$date);
+                $query->whereMonth('created_at', $arr_date[1])->whereYear('created_at', $arr_date[0]);
             }
             else {
-                if(!empty($month)) {
-                    $query->whereMonth('created_at', $month)->whereYear('created_at', date("Y"));
-                }
+                $query->whereDate('created_at', $date);
+            }
+            if(!empty($phone)) {
+                $query->where('sdt', $phone);
             }
             $data = $query->get();
+            $total = 0;
             foreach($data as $key => $v) {
                 $data[$key]['chi_tiet'] = ChiTietHoaDon::where('ma_hoa_don', $v['id'])->get();
                 $data[$key]['so_luong'] = count($data[$key]['chi_tiet']);
+                $total += (int)$v['tong_tien'];
             }  
-            return response()->json(['data' => $data], 200);
+            return response()->json(['data' => $data, 'total' => $total], 200);
         }
 
     }

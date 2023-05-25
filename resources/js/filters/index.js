@@ -49,3 +49,9 @@ export function convertDate(date) {
   const tmp = new Date(date);
   return tmp.getDate() + '-' + (parseInt(tmp.getMonth()) + 1) + '-' + tmp.getFullYear();
 }
+
+export function convertDateFromTimestamp(date) {
+  const arr_timestamp = date.split('T');
+  const tmp = new Date(arr_timestamp[0]);
+  return tmp.getDate() + '-' + (parseInt(tmp.getMonth()) + 1) + '-' + tmp.getFullYear() + ' ' + arr_timestamp[1];
+}
