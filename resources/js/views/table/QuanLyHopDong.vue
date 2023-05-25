@@ -111,9 +111,6 @@
         <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
-        <el-button type="primary" @click="createData()">
-          Lưu
-        </el-button>
       </div>
     </el-dialog>
 
