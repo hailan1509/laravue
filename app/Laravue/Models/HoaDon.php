@@ -13,11 +13,13 @@ use Laravel\Sanctum\HasApiTokens;
 class HoaDon extends Model
 {
     protected $table = 'hoa_don';
+    public $timestamps = true;
     protected $fillable = [
         'id',
         'ten_khach_hang',
         'sdt',
         'chuyen_khoan',
         'tong_tien',
+        'ngay',
     ];
 }

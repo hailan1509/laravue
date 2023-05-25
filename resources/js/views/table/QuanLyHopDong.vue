@@ -53,9 +53,9 @@
           <span>{{ scope.row.tong_tien | toThousandFilter }} VNĐ</span>
         </template>
       </el-table-column>
-      <el-table-column :label="titles.created_at" prop="created_at" sortable="custom" align="center" style="width: 5%;">
+      <el-table-column :label="titles.ngay" prop="ngay" sortable="custom" align="center" style="width: 5%;">
         <template slot-scope="scope">
-          <span>{{ scope.row.created_at | convertDateFromTimestamp }}</span>
+          <span>{{ scope.row.ngay | convertDateFromTimestamp }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" style="width: 30%;" class-name="small-padding fixed-width">
@@ -213,7 +213,7 @@ export default {
         gia: 'Giá',
         gia_khuyen_mai: 'Chiết khấu',
         ten_dich_vu: 'Tên dịch vụ',
-        created_at: 'Ngày',
+        ngay: 'Ngày',
         thanh_tien: 'Thành tiền',
       },
       loai_dich_vu: {

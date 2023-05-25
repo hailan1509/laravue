@@ -40,10 +40,10 @@ class HoaDonController extends BaseController
             $query = HoaDon::select(['hoa_don.*']);
             if($month) {
                 $arr_date = explode('/',$date);
-                $query->whereMonth('created_at', $arr_date[1])->whereYear('created_at', $arr_date[0]);
+                $query->whereMonth('ngay', $arr_date[1])->whereYear('ngay', $arr_date[0]);
             }
             else {
-                $query->whereDate('created_at', $date);
+                $query->whereDate('ngay', $date);
             }
             if(!empty($phone)) {
                 $query->where('sdt', $phone);
@@ -83,6 +83,7 @@ class HoaDonController extends BaseController
                 $hoa_don_new->sdt = $phone;
                 $hoa_don_new->tong_tien = $total;
                 $hoa_don_new->chuyen_khoan = $delivery == 'false' ? '0' : '1';
+                $hoa_don_new->ngay = Carbon::now();
                 $hoa_don_new->save();
                 $id_new = $hoa_don_new->id;
                 foreach($data as $v) {
