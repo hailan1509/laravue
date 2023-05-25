@@ -70,7 +70,7 @@
           <el-switch v-model="form.delivery" />
         </el-form-item>
       </el-form>
-      <el-button type="primary" style="width:100%" @click="save()">
+      <el-button type="primary" :disabled="!form.phone || newData.length == 0" style="width:100%" @click="save()">
         Tạo hóa đơn
       </el-button>
       <!-- </el-form-item> -->

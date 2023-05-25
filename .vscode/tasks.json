@@ -1,0 +1,14 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Laravel and Vue.js",
+            "command": "npm run watch ; php artisan serve",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+  }

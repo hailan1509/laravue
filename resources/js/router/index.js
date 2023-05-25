@@ -13,7 +13,7 @@ Vue.use(Router);
 import Layout from '@/layout';
 
 /* Router for modules */
-import elementUiRoutes from './modules/element-ui';
+// import elementUiRoutes from './modules/element-ui';
 // import componentRoutes from './modules/components';
 // import chartsRoutes from './modules/charts';
 import tableRoutes from './modules/table';
@@ -131,7 +131,7 @@ export const constantRoutes = [
   //     },
   //   ],
   // },
-  elementUiRoutes,
+  // elementUiRoutes,
 ];
 
 export const asyncRoutes = [

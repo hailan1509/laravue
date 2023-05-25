@@ -15,6 +15,7 @@ use App\Laravue\Models\ChiTietHoaDon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Validator;
+use Carbon\Carbon;
 
 /**
  * Class UserController
@@ -30,15 +31,28 @@ class HoaDonController extends BaseController
         $query = [];
         if(isset($searchParams['id'])) {
             $query = HoaDon::find($searchParams['id']);
+            return response()->json(['data' => $query], 200);
         }
         else{
-
-            $query = HoaDon::select(['hoa_don.*','phong.ten_phong','nguoi_thue.ten'])->leftJoin('phong','hoa_don.ma_phong','phong.id')
-            ->leftJoin('nguoi_thue','hoa_don.ma_nguoi_thue','nguoi_thue.id')->get()->toArray();
-            // dd($query);
+            $date = $searchParams['date'];
+            $month = $searchParams['month'];
+            $query = HoaDon::select(['hoadon.*']);
+            if(!empty($date)) {
+                $query->whereDate('created_at', $date);
+            }
+            else {
+                if(!empty($month)) {
+                    $query->whereMonth('created_at', $month)->whereYear('created_at', date("Y"));
+                }
+            }
+            $data = $query->get();
+            foreach($data as $key => $v) {
+                $data[$key]['chi_tiet'] = ChiTietHoaDon::where('ma_hoa_don', $v['id'])->get();
+                $data[$key]['so_luong'] = count($data[$key]['chi_tiet']);
+            }  
+            return response()->json(['data' => $data], 200);
         }
 
-        return response()->json(['data' => $query], 200);
     }
 
     public function store(Request $request) {

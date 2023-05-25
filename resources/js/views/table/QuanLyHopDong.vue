@@ -1,10 +1,14 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <div class="filter-container" style="display: flex;">
 
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         {{ $t('table.add') }}
-      </el-button>
+      </el-button> -->
+      <el-date-picker v-model="temp.ngay_vao" type="date" placeholder="Chọn ngày" style="width: 20%; margin-left: 20px" />
+      <el-select v-model="temp.ma_phong" placeholder="Chọn tháng" style="margin-left: 20px">
+        <el-option v-for="(key, item) in months" :key="key" :label="item" :value="key" />
+      </el-select>
 
     </div>
 
@@ -175,22 +179,31 @@ export default {
         title: [{ required: true, message: 'title is required', trigger: 'blur' }],
       },
       titles: {
-        ten: 'Tên người thuê',
-        id: 'Mã hợp đồng',
-        nam_sinh: 'Năm sinh',
-        ngay_vao: 'Ngày vào',
-        ma_phong: 'Mã phòng',
-        ten_phong: 'Tên phòng',
-        que_quan: 'Quê quán',
-        da_coc: 'Đã cọc',
-        trang_thai: 'Trạng thái',
-        so_nguoi_thue: 'Số người/ phòng',
+        id: 'Mã hoá đơn',
+        ten_khach_hang: 'Tên khách hàng',
+        tong_tien: 'Tổng đơn',
+        so_luong: 'Số lượng dịch vụ',
+        created_date: 'Ngày',
       },
       loai_dich_vu: {
         0: 'Tiền điện',
         1: 'Tiền nước',
         2: 'Theo phòng',
         3: 'Theo số người',
+      },
+      months: {
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+        5: 5,
+        6: 6,
+        7: 7,
+        8: 8,
+        9: 9,
+        10: 10,
+        11: 11,
+        12: 12,
       },
       downloadLoading: false,
     };
