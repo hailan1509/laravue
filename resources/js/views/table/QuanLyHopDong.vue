@@ -276,6 +276,10 @@ export default {
   methods: {
     async getList() {
       this.listLoading = true;
+      console.log(this.listQuery.date);
+      if (typeof (this.listQuery.date) !== 'string') {
+        this.listQuery.date = this.listQuery.date.getFullYear() + '/' + (parseInt(this.listQuery.date.getMonth()) + 1) + '/' + this.listQuery.date.getDate();
+      }
       const { data, total } = await fetchList(this.listQuery);
       this.total_money = total;
       this.list = data;
