@@ -37,8 +37,10 @@ class ChiTietHoaDonController extends BaseController
     {
         $searchParams = $request->all();
         $query = [];
-        $query = ChiTietHoaDon::select(['chi_tiet_hoa_don.*','hoa_don.ten_khach_hang','hoa_don.sdt'])
-                ->where('chi_tiet_hoa_don.is_combo','1');
+        $query = ChiTietHoaDon::select(['chi_tiet_hoa_don.*','hoa_don.ten_khach_hang','hoa_don.sdt']);
+        if(isset($searchParams['is_combo']) && !empty($searchParams['is_combo'])) {
+            $query->where('chi_tiet_hoa_don.is_combo','1');
+        }
         if(isset($searchParams['sdt']) && !empty($searchParams['sdt'])) {
             $query->where('hoa_don.sdt',$searchParams['sdt']);
         }

@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Api;
 use App\Laravue\Models\HoaDon;
 use App\Laravue\Models\KhachHang;
 use App\Laravue\Models\ChiTietHoaDon;
+use App\Laravue\Models\DichVu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Validator;
@@ -85,9 +86,9 @@ class HoaDonController extends BaseController
                 $hoa_don_new->chuyen_khoan = $delivery == 'false' ? '0' : '1';
                 $hoa_don_new->ngay = Carbon::now();
                 $hoa_don_new->save();
-                $id_new = $hoa_don_new->id;
+                $id_new = $hoa_don_new->id;            
                 foreach($data as $v) {
-                    $values = ['ma_hoa_don' => $id_new,'ma_dich_vu' => $v['id'], 'ten_dich_vu' => $v['ten_dich_vu_km'], 'gia' => $v['gia'], 'gia_khuyen_mai' => $v['gia_khuyen_mai'], 'soluong' => $v['soluong']];
+                    $values = ['ma_hoa_don' => $id_new,'ma_dich_vu' => $v['id'], 'ten_dich_vu' => $v['ten_dich_vu_km'], 'gia' => $v['gia'], 'gia_khuyen_mai' => $v['gia_khuyen_mai'], 'soluong' => $v['soluong'], 'is_combo' => $v['is_combo'] ? 1 : 0, 'so_luong_combo' => $v['so_luong_combo'] * $v['soluong']];
                     ChiTietHoaDon::create($values);
                 }
                 $pass = true;
