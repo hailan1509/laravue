@@ -14,7 +14,10 @@ use App\Http\Resources\UserResource;
 use App\Laravue\JsonResponse;
 use App\Laravue\Models\Permission;
 use App\Laravue\Models\Role;
-use App\Laravue\Models\DichVu;
+use App\Laravue\Models\KhachHang;
+use App\Laravue\Models\ChiTietCombo;
+use App\Laravue\Models\ChiTietHoaDon;
+use App\Laravue\Models\HoaDon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Arr;
@@ -27,62 +30,47 @@ use Validator;
  *
  * @package App\Http\Controllers\Api
  */
-class DichVuController extends BaseController
+class ChiTietHoaDonController extends BaseController
 {
     
     public function index(Request $request)
     {
         $searchParams = $request->all();
         $query = [];
-        if(isset($searchParams['id'])) {
-            $query = DichVu::find($searchParams['id']);
+        $query = ChiTietHoaDon::select(['chi_tiet_hoa_don.*','hoa_don.ten_khach_hang','hoa_don.sdt'])
+                ->where('chi_tiet_hoa_don.is_combo','1');
+        if(isset($searchParams['sdt']) && !empty($searchParams['sdt'])) {
+            $query->where('hoa_don.sdt',$searchParams['sdt']);
         }
-        else{
-            if(isset($searchParams['search'])) {
-                // dd($searchParams['search']);
-                $query = DichVu::where('ten_dich_vu','like', '%'.$searchParams['search'].'%')->get()->toArray();
-            }
-            else
-                $query = DichVu::all()->toArray();
-                foreach($query as $key => $v) {
-                    $query[$key]['is_combo'] = $query[$key]['is_combo'] == 1 ? true : false;
-                }
-            // dd($query);
+        if(isset($searchParams['ma_dich_vu']) && !empty($searchParams['ma_dich_vu'])) {
+            $query->where('chi_tiet_hoa_don.ma_dich_vu',$searchParams['ma_dich_vu']);
         }
+        $query->orderBy('created_at','desc')->get()->toArray();
 
         return response()->json(['data' => $query], 200);
     }
 
     public function store(Request $request) {
         $id = $request->get("id","");
-        $ten = $request->get("ten_dich_vu","");
+        $ten = $request->get("ten_phong","");
         $gia = $request->get("gia",0);
-        $gia_khuyen_mai = $request->get("gia_khuyen_mai",0);
-        $ten_khuyen_mai = $request->get("ten_khuyen_mai",'');
-        $gia = $request->get("gia",0);
-        $is_combo = $request->get("is_combo",false);
-        $so_luong_combo = $request->get("so_luong_combo",0);
-        $trang_thai = $request->get("trang_thai","1");
+        $type = $request->get("type",1);
+        
         // dd($ten,$gia,$request->all());
 
         try {
 
             if(empty($id)) {
-                // $query = DichVu::insert(['ten_DichVu'=>$ten,'gia'=>$gia]);
-                $model = new DichVu;
-                $model->ten_dich_vu = $ten;
+                // $query = Phong::insert(['ten_phong'=>$ten,'gia'=>$gia]);
+                $model = new KhachHang;
+                $model->ten_phong = $ten;
                 $model->gia = $gia;
-                $model->trang_thai = $trang_thai;
-                $model->ten_khuyen_mai = $ten_khuyen_mai;
-                $model->gia_khuyen_mai = $gia_khuyen_mai;
-                $model->is_combo = $is_combo ? '1' : '0';
-                $model->so_luong_combo = $so_luong_combo;
+                $model->type = $type;
                 $model->save();
                 return response()->json(['message' => "Thành công !","success" => true,"id"=> $model->id]);
             }
             else {
-                $query = DichVu::where('id',$id)
-                ->update(['ten_dich_vu' => $ten,'gia'=>$gia, 'trang_thai' => $trang_thai, 'ten_khuyen_mai' => $ten_khuyen_mai,'gia_khuyen_mai' => $gia_khuyen_mai,'is_combo' => $is_combo ? '1' : '0', 'so_luong_combo' => $so_luong_combo ]);
+                $query = KhachHang::where('id',$id)->update(['ten_phong' => $ten,'gia'=>$gia]);
             }
 
             return response()->json(['message' => "Thành công !","success" => true]);
@@ -96,7 +84,7 @@ class DichVuController extends BaseController
         $id = $request->get("id","");
         try{
             if(!empty($id)) {
-                $query = DichVu::where('id',$id)->delete();
+                $query = KhachHang::where('id',$id)->delete();
             }
             return response()->json(['message' => "Thành công !","success" => true]);
         }catch (\Exception $ex) {

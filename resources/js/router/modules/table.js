@@ -24,10 +24,10 @@ const tableRoutes = {
     //   meta: { title: 'inlineEditTable' },
     // },
     {
-      path: 'quan-ly-phong',
+      path: 'quan-ly-combo',
       component: () => import('@/views/table/QuanLyPhongTro'),
       name: 'QuanLyPhongTro',
-      meta: { title: 'Quản lý phòng trọ' },
+      meta: { title: 'Quản lý Combo' },
     },
     {
       path: 'quan-ly-dich-vu',

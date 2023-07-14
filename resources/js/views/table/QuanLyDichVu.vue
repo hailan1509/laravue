@@ -84,6 +84,12 @@
         <el-form-item :label="titles.gia_khuyen_mai" prop="gia_khuyen_mai">
           <el-input-number v-model="temp.gia_khuyen_mai" />
         </el-form-item>
+        <el-form-item :label="titles.is_combo" prop="is_combo">
+          <el-switch v-model="temp.is_combo" />
+        </el-form-item>
+        <el-form-item v-if="temp.is_combo" :label="titles.so_luong_combo" prop="so_luong_combo">
+          <el-input-number v-model="temp.so_luong_combo" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -150,6 +156,7 @@ export default {
         title: '',
         type: '',
         status: 'published',
+        is_combo: false,
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -171,6 +178,8 @@ export default {
         ten_khuyen_mai: 'Tên khuyến mại',
         gia_khuyen_mai: 'Giá khuyến mại',
         trang_thai: 'Trạng thái',
+        is_combo: 'Gói combo',
+        so_luong_combo: 'Số lượng / combo',
       },
       loai_dich_vu: {
         0: 'Ẩn',
@@ -233,6 +242,8 @@ export default {
         ten_khuyen_mai: '',
         gia_khuyen_mai: 0,
         trang_thai: '1',
+        is_combo: false,
+        so_luong_combo: 0,
       };
     },
     handleCreate() {

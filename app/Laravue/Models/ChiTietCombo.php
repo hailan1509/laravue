@@ -10,18 +10,13 @@ use Laravel\Sanctum\HasApiTokens;
 /**
 
  */
-class ChiTietHoaDon extends Model
+class ChiTietCombo extends Model
 {
-    protected $table = 'chi_tiet_hoa_don';
+    protected $table = 'chi_tiet_combo';
     protected $fillable = [
-        'ma_hoa_don',
         'ma_dich_vu',
-        'soluong',
-        'ten_dich_vu',
-        'gia',
-        'gia_khuyen_mai',
-        'is_combo',
-        'so_luong_combo',
-        'so_luong_con_lai',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 }

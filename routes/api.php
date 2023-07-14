@@ -54,6 +54,8 @@ Route::namespace('Api')->group(function() {
     Route::post('/HoaDon/addOrEdit','HoaDonController@store' );
     Route::post('/HoaDon/delete','HoaDonController@delete' );
     Route::get('/khachhang/list','KhachHangController@index' );
+    Route::get('/combo/list','ChiTietHoaDonController@index' );
+    Route::get('/khachhang/list','KhachHangController@index' );
 });
 
 
