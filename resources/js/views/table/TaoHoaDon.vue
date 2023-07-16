@@ -92,7 +92,7 @@
         </el-row>
         <el-row class="line">
           <el-col :span="24">
-            <b>Điện thoại : 0928994636</b>
+            <b>Điện thoại : 0928994636 - 0931578820</b>
           </el-col>
         </el-row>
         <el-row class="line">
