@@ -63,6 +63,9 @@
           <el-button type="primary" @click="handleUpdate(row)">
             Xem chi tiết
           </el-button>
+          <el-button type="danger" @click="deleteHD(row.id)">
+            Xóa hóa đơn
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -127,7 +130,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/hoa_don';
+import { fetchList, deleteHoaDon } from '@/api/hoa_don';
 import { fetchList as listKH } from '@/api/khach_hang';
 import { fetchList as getLstPhong } from '@/api/phong';
 import waves from '@/directive/waves'; // Waves directive
@@ -271,7 +274,6 @@ export default {
   created() {
     this.getList();
     this.getKH();
-    this.getlstPhong();
   },
   methods: {
     async getList() {
@@ -324,6 +326,17 @@ export default {
       const { data } = await getLstPhong(this.listQuery);
       this.lstPhong = data;
       // this.total = data.length;
+    },
+    async deleteHD(id) {
+      await deleteHoaDon({ 'id': id }).then((res) => {
+        this.$notify({
+          title: 'Success',
+          message: 'Xóa thành công!',
+          type: 'success',
+          duration: 2000,
+        });
+        this.getList();
+      });
     },
     handleFilter() {
       this.listQuery.page = 1;
