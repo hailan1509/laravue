@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <div class="filter-container" style="display: flex !important;">
       <!-- <el-input v-model="listQuery.title" :placeholder="$t('table.title')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.importance" :placeholder="$t('table.importance')" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
@@ -14,9 +14,10 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         {{ $t('table.search') }}
       </el-button> -->
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <v-select v-model="listQuery.sdt" style="width: 30%; margin-left: 20px" :options="lstKhachHang" label="ten_kh" placeholder="Tìm kiếm khách hàng" :reduce="option => option.sdt" @input="handleInputKH" @select="handleSelectKH" />
+      <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         {{ $t('table.add') }}
-      </el-button>
+      </el-button> -->
       <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         {{ $t('table.export') }}
       </el-button>
@@ -35,69 +36,40 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column :label="titles.ma_phong" prop="id" sortable="custom" align="center" style="width: 10%;">
+      <el-table-column :label="titles.ten_khach_hang" prop="ten_khach_hang" sortable="custom" align="center" style="width: 10%;">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.ten_khach_hang }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="titles.ten_phong" prop="ten_phong" sortable="custom" align="center" style="width: 40%;">
+      <el-table-column :label="titles.sdt" prop="sdt" sortable="custom" align="center" style="width: 10%;">
         <template slot-scope="scope">
-          <span>{{ scope.row.ten_phong }}</span>
+          <span>{{ scope.row.sdt }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column :label="titles.gia_phong" prop="gia" sortable="custom" align="center" style="width: 20%;">
+      <el-table-column :label="titles.created_at" prop="created_at" sortable="custom" align="center" style="width: 10%;">
         <template slot-scope="scope">
-          <span>{{ scope.row.gia | toThousandFilter }}</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column :label="titles.type" prop="gia" sortable="custom" align="center" style="width: 20%;">
-        <template slot-scope="scope">
-          <span>{{ scope.row.type == '1' ? 'Nam' : 'Nữ' }}</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column :label="$t('table.date')" width="150px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ convertDate(scope.row.created_at) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.title')" min-width="150px">
-        <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
-          <el-tag>{{ row.type | typeFilter }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.author')" width="110px" align="center">
+      <el-table-column :label="titles.ten_dich_vu" prop="ten_dich_vu" sortable="custom" align="center" style="width: 10%;">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row.ten_dich_vu }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="showReviewer" :label="$t('table.reviewer')" width="110px" align="center">
+      <el-table-column :label="titles.so_luong_combo" prop="so_luong_combo" sortable="custom" align="center" style="width: 10%;">
         <template slot-scope="scope">
-          <span style="color:red;">{{ scope.row.reviewer }}</span>
+          <span>{{ scope.row.so_luong_combo }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.importance')" width="80px">
+      <el-table-column :label="titles.so_luong_con_lai" prop="so_luong_con_lai" sortable="custom" align="center" style="width: 10%;">
         <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
+          <span>{{ scope.row.so_luong_con_lai > 0 ? scope.row.so_luong_con_lai:'Đã hết lượt dùng' }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.readings')" align="center" width="95">
-        <template slot-scope="{row}">
-          <span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>
-          <span v-else>0</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.status')" class-name="status-col" width="100">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column :label="$t('table.actions')" align="center" style="width: 30%;" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Sửa
+          <el-button v-if="row.so_luong_con_lai > 0" type="primary" size="mini" @click="modalConfirm(row)">
+            Thêm
           </el-button>
           <!-- <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
             {{ $t('table.publish') }}
@@ -105,8 +77,8 @@
           <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
             {{ $t('table.draft') }}
           </el-button> -->
-          <el-button size="mini" type="danger" @click="handleDelete(row)">
-            Xóa
+          <el-button size="mini" type="success" @click="modalDetail(row)">
+            Xem
           </el-button>
           <!-- <el-button size="small" type="success" @click="handleCreateHD(row)">
             Tạo hóa đơn
@@ -116,71 +88,46 @@
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="150px" style="width: 400px; margin-left:50px;">
-        <el-form-item :label="titles.ten_phong" prop="ten_phong">
-          <el-input v-model="temp.ten_phong" />
-        </el-form-item>
-        <!-- <el-form-item :label="titles.gia_phong" prop="gia">
-          <el-input-number v-model="temp.gia" />
-        </el-form-item> -->
-      </el-form>
+    <el-dialog :visible.sync="dialogPvVisible" :title="'KH '+ ten_khach_hang + ' sử dụng ' + ten_dich_vu">
+      <span>Bạn có chắc chắn ?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addCombo()">Có</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :title="'Thông tin chi tiết combo'" :visible.sync="dialogFormVisible">
+      <h2>Danh sách lần sử dụng combo</h2>
+      <el-table
+        :key="tableKey"
+        v-loading="listLoading"
+        :data="chi_tiet"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%;"
+      >
+        <el-table-column label="Lần" type="index" style="width: 40% !important;" align="center" />
+        <el-table-column :label="'Ngày'" prop="created_at" sortable="custom" align="center" style="width: 60%;">
+          <template slot-scope="scope">
+            <span>{{ convertDate(scope.row.created_at) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Thoát
-        </el-button>
-        <el-button type="primary" @click="createData()">
-          Lưu
+          {{ $t('table.cancel') }}
         </el-button>
       </div>
-    </el-dialog>
-    <el-dialog :title="'Tạo hóa đơn tháng '+((new Date).getMonth()+1) + ' cho '+ form_hoa_don.ten_phong" :visible.sync="dialogFormHDVisible">
-      <el-form ref="dataForm" :rules="rules" :model="form_hoa_don" label-position="left" label-width="150px" style="width: 500px; margin-left:50px;">
-        <el-form-item label="Số điện" prop="so_dien">
-          <el-input-number v-model="form_hoa_don.so_dien" /> x {{ tien_dien | toThousandFilter }} = {{ form_hoa_don.so_dien * tien_dien | toThousandFilter }}
-        </el-form-item>
-        <el-form-item label="Số nước" prop="so_nuoc">
-          <el-input-number v-model="form_hoa_don.so_nuoc" /> x {{ tien_nuoc | toThousandFilter }} = {{ form_hoa_don.so_nuoc * tien_nuoc | toThousandFilter }}
-        </el-form-item>
-        <el-form-item label="Tiền phát sinh" prop="tien_phat_sinh">
-          <el-input-number v-model="form_hoa_don.tien_phat_sinh" />
-        </el-form-item>
-        <el-form-item label="Trạng thái" prop="da_thanh_toan">
-          <el-select v-model="form_hoa_don.da_thanh_toan" placeholder="Trạng thái">
-            <el-option label="Đã thanh toán" value="1" />
-            <el-option label="Chưa thanh toán" value="0" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormHDVisible = false">
-          Thoát
-        </el-button>
-        <el-button type="primary" @click="createHoaDon()">
-          Lưu hóa đơn
-        </el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, fetchPv, createPhong, deletePhong } from '@/api/phong';
-import { fetchList as lstDV } from '@/api/dich_vu';
-import { createHoaDon, getHoaDonByPhong } from '@/api/hoa_don';
+import { fetchList as listKH } from '@/api/khach_hang';
+import { fetchListCombo, createCombo } from '@/api/combo';
 import waves from '@/directive/waves'; // Waves directive
 import { parseTime } from '@/utils';
+import vSelect from 'vue-select';
+import 'vue-select/dist/vue-select.css';
 import Pagination from '@/components/Pagination'; // Secondary package based on el-pagination
 
 const calendarTypeOptions = [
@@ -198,7 +145,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'QuanLyPhongTro',
-  components: { Pagination },
+  components: { Pagination, vSelect },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -226,6 +173,8 @@ export default {
         title: undefined,
         type: undefined,
         sort: '+id',
+        sdt: '',
+        is_combo: 1,
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
@@ -257,10 +206,12 @@ export default {
         title: [{ required: true, message: 'title is required', trigger: 'blur' }],
       },
       titles: {
-        ten_phong: 'Tên nhóm dịch vụ',
-        ma_phong: 'Mã nhóm',
-        gia_phong: 'Giá phòng',
-        type: 'Loại',
+        ten_khach_hang: 'Tên khách hàng',
+        sdt: 'Điện thoại',
+        created_at: 'Ngày mua',
+        ten_dich_vu: 'Dịch vụ',
+        so_luong_combo: 'Số lượng 1 combo',
+        so_luong_con_lai: 'Còn lại',
       },
       form_hoa_don: {
         ma_phong: 0,
@@ -273,39 +224,60 @@ export default {
       tien_nuoc: 0,
       hoadon: {},
       downloadLoading: false,
+      lstKhachHang: [],
+      chi_tiet_hd_id: '',
+      ten_dich_vu: '',
+      ten_khach_hang: '',
+      chi_tiet: [],
     };
+  },
+  watch: {
+    'listQuery.sdt': {
+      handler: function() {
+        this.getList();
+      },
+      immediate: true,
+    },
   },
   created() {
     this.getList();
-    this.getDV();
+    this.getKH();
   },
   methods: {
     async getList() {
       this.listLoading = true;
-      const { data } = await fetchList(this.listQuery);
+      const { data } = await fetchListCombo(this.listQuery);
       this.list = data;
       this.total = data.length;
 
       // Just to simulate the time of the request
       this.listLoading = false;
     },
-    async getHD(ma_phong) {
-      const tmp = {
-        ma_phong: ma_phong,
-      };
-      const { data } = await getHoaDonByPhong(Object.assign({}, tmp));
-      this.hoadon = data;
+    async addCombo(){
+      this.dialogPvVisible = false;
+      const { message } = await createCombo({ id: this.chi_tiet_hd_id });
+      this.$message({
+        message: message,
+        type: 'success',
+      });
+      this.getList();
     },
-    async getDV(){
-      const { data } = await lstDV();
-      for (const item of data) {
-        if (item.trang_thai === 0) {
-          this.tien_dien = item.gia;
-        }
-        if (item.trang_thai === 1) {
-          this.tien_nuoc = item.gia;
-        }
-      }
+    modalConfirm(row){
+      this.dialogPvVisible = true;
+      this.chi_tiet_hd_id = row.id;
+      this.ten_dich_vu = row.ten_dich_vu;
+      this.ten_khach_hang = row.ten_khach_hang;
+    },
+    modalDetail(row){
+      this.dialogFormVisible = true;
+      this.chi_tiet = row.chi_tiet;
+    },
+    async getKH(){
+      const { data } = await listKH();
+      data.forEach((v, key) => {
+        data[key]['ten_kh'] = v['ten'] + ' - ' + v['sdt'];
+      });
+      this.lstKhachHang = data;
     },
     handleFilter() {
       this.listQuery.page = 1;
@@ -357,58 +329,6 @@ export default {
         this.$refs['dataForm'].clearValidate();
       });
     },
-    createHoaDon(){
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          createHoaDon(this.form_hoa_don).then((res) => {
-            this.dialogFormVisible = false;
-            if (res.success){
-              this.$notify({
-                title: 'Success',
-                message: res.message,
-                type: 'success',
-                duration: 2000,
-              });
-              this.getList();
-              // this.list.unshift(this.temp);
-            } else {
-              this.$notify({
-                title: 'Error',
-                message: res.message,
-                type: 'error',
-                duration: 2000,
-              });
-            }
-          });
-        }
-      });
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          createPhong(this.temp).then((res) => {
-            this.dialogFormVisible = false;
-            if (res.success){
-              this.$notify({
-                title: 'Success',
-                message: res.message,
-                type: 'success',
-                duration: 2000,
-              });
-              this.getList();
-              // this.list.unshift(this.temp);
-            } else {
-              this.$notify({
-                title: 'Error',
-                message: res.message,
-                type: 'error',
-                duration: 2000,
-              });
-            }
-          });
-        }
-      });
-    },
     handleUpdate(row) {
       this.temp = Object.assign({}, row); // copy obj
       this.temp.timestamp = new Date(this.temp.timestamp);
@@ -416,72 +336,6 @@ export default {
       this.dialogFormVisible = true;
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate();
-      });
-    },
-    handleCreateHD(row) {
-      this.resetFormHD();
-      console.log(row);
-      this.form_hoa_don.ma_phong = row.id;
-      this.form_hoa_don.ten_phong = row.ten_phong;
-      this.dialogStatus = 'createHD';
-      this.dialogFormHDVisible = true;
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate();
-      });
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp);
-          tempData.timestamp = +new Date(tempData.timestamp); // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          deletePhong(tempData).then(() => {
-            for (const v of this.list) {
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v);
-                this.list.splice(index, 1, this.temp);
-                break;
-              }
-            }
-            this.dialogFormVisible = false;
-            this.$notify({
-              title: 'Success',
-              message: 'Updated successfully',
-              type: 'success',
-              duration: 2000,
-            });
-          });
-        }
-      });
-    },
-    handleDelete(row) {
-      deletePhong(row).then((rs) => {
-        this.$notify({
-          title: 'Success',
-          message: 'Deleted successfully',
-          type: 'success',
-          duration: 2000,
-        });
-        this.getList();
-      });
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData;
-        this.dialogPvVisible = true;
-      });
-    },
-    handleDownload() {
-      this.downloadLoading = true;
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status'];
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status'];
-        const data = this.formatJson(filterVal, this.list);
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list',
-        });
-        this.downloadLoading = false;
       });
     },
     formatJson(filterVal, jsonData) {
@@ -493,6 +347,20 @@ export default {
         }
       }));
     },
+    handleInputKH(value) {
+    },
+    handleSelectKH(value) {
+    },
+    convertDate(date) {
+      const date_arr = date.split('T');
+      const date_rs = date_arr[0].split('-');
+      return date_rs[2] + '-' + date_rs[1] + '-' + date_rs[0];
+    },
   },
 };
 </script>
+<style>
+  .el-dialog {
+    width: 30% !important;
+  }
+</style>

@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 
-export function fetchList(query) {
+export function fetchListCombo(query) {
   return request({
     url: '/combo/list',
     method: 'get',
@@ -22,13 +22,13 @@ export function fetchList(query) {
 //   });
 // }
 
-// export function createPhong(data) {
-//   return request({
-//     url: '/phong/addOrEdit',
-//     method: 'post',
-//     data,
-//   });
-// }
+export function createCombo(data) {
+  return request({
+    url: '/combo/update',
+    method: 'post',
+    data,
+  });
+}
 
 // export function deletePhong(data) {
 //   return request({

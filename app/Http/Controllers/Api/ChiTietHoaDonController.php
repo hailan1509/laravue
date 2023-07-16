@@ -18,6 +18,7 @@ use App\Laravue\Models\KhachHang;
 use App\Laravue\Models\ChiTietCombo;
 use App\Laravue\Models\ChiTietHoaDon;
 use App\Laravue\Models\HoaDon;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Arr;
@@ -36,8 +37,9 @@ class ChiTietHoaDonController extends BaseController
     public function index(Request $request)
     {
         $searchParams = $request->all();
+        // dd($searchParams);
         $query = [];
-        $query = ChiTietHoaDon::select(['chi_tiet_hoa_don.*','hoa_don.ten_khach_hang','hoa_don.sdt']);
+        $query = ChiTietHoaDon::select(['chi_tiet_hoa_don.*','hoa_don.ten_khach_hang','hoa_don.sdt'])->join('hoa_don','hoa_don.id','=','chi_tiet_hoa_don.ma_hoa_don');
         if(isset($searchParams['is_combo']) && !empty($searchParams['is_combo'])) {
             $query->where('chi_tiet_hoa_don.is_combo','1');
         }
@@ -47,9 +49,25 @@ class ChiTietHoaDonController extends BaseController
         if(isset($searchParams['ma_dich_vu']) && !empty($searchParams['ma_dich_vu'])) {
             $query->where('chi_tiet_hoa_don.ma_dich_vu',$searchParams['ma_dich_vu']);
         }
-        $query->orderBy('created_at','desc')->get()->toArray();
+        $query->orderBy('created_at','desc');
+        $data = $query->get()->toArray();
+        foreach($data as $key => $v) {
+            $data[$key]['chi_tiet'] = ChiTietCombo::where('ma_chi_tiet_hd', $v['id'])->orderBy('created_at')->get()->toArray();
+        }
 
-        return response()->json(['data' => $query], 200);
+        return response()->json(['data' => $data], 200);
+    }
+
+    public function storeCombo(Request $request) {
+        $id  = $request->input('id');
+        $chi_tiet = ChiTietHoaDon::where('id',$id)->first();
+        if($chi_tiet->so_luong_con_lai > 0) {
+            $chi_tiet->so_luong_con_lai = $chi_tiet->so_luong_con_lai - 1;
+            $chi_tiet->save();
+            ChiTietCombo::insert(['ma_chi_tiet_hd' => $id, 'created_at' => Carbon::now()]);
+            return response()->json(['message' => "Cập nhật thành công!"], 200);
+        }
+        return response()->json(['message' => "Số lượng trong combo của khách đã hết!"], 500);
     }
 
     public function store(Request $request) {

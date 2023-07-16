@@ -59,7 +59,7 @@
             <td>{{ item.ten_dich_vu_km }}</td>
             <td><el-input-number v-model="item.soluong" :min="min" placeholder="Số lượng" style="width: 100%" /></td>
             <td>{{ item.gia | toThousandFilter }}</td>
-            <td>{{ item.gia_khuyen_mai ? item.gia_khuyen_mai + '%' : '' }}</td>
+            <td><el-input-number v-model="item.gia_khuyen_mai" :min="min" placeholder="Chiết khấu" style="width: 100%" /></td>
             <td>{{ parseInt(item.gia_khuyen_mai) ? Math.floor((item.soluong * item.gia) - (item.soluong * item.gia) * parseInt(item.gia_khuyen_mai) / 100) : item.soluong * item.gia | toThousandFilter }}</td>
             <td><i class="el-icon-error" @click="deleteDV(item.id)" /></td>
           </tr>
