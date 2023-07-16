@@ -49,7 +49,7 @@ class HoaDonController extends BaseController
             if(!empty($phone)) {
                 $query->where('sdt', $phone);
             }
-            $data = $query->get();
+            $data = $query->whereNull('deleted_at')->get();
             $total = 0;
             foreach($data as $key => $v) {
                 $data[$key]['chi_tiet'] = ChiTietHoaDon::where('ma_hoa_don', $v['id'])->get();
@@ -109,7 +109,7 @@ class HoaDonController extends BaseController
         $id = $request->get("id","");
         try{
             if(!empty($id)) {
-                $query = HoaDon::where('id',$id)->delete();
+                $query = HoaDon::where('id',$id)->update(['deleted_at' => Carbon::now()]);
             }
             return response()->json(['message' => "Thành công !","success" => true]);
         }catch (\Exception $ex) {
