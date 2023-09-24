@@ -8,7 +8,7 @@
       </div>
       <el-form ref="form" :model="form" label-width="200px">
         <el-form-item label="Thông tin khách hàng">
-          <el-col :span="11">
+          <el-col :span="8">
             <v-select v-model="form.phone" :options="lstKhachHang" label="ten_kh" placeholder="Tìm kiếm khách hàng" :reduce="option => option.sdt" @input="handleInputKH" @select="handleSelectKH" />
             <!-- <el-input v-model="form.phone" placeholder="Số điện thoại" /> -->
           </el-col>
@@ -21,8 +21,14 @@
           <el-col :span="1">&nbsp;
             <!-- <el-input v-model="form.name" placeholder="Tên khách hàng" /> -->
           </el-col>
-          <el-col :span="5">
+          <el-col :span="4">
             <el-input v-model="form.phone" placeholder="Số điện thoại" />
+          </el-col>
+          <el-col :span="1">&nbsp;
+            <!-- <el-input v-model="form.name" placeholder="Tên khách hàng" /> -->
+          </el-col>
+          <el-col :span="3">
+            <el-date-picker v-model="form.ngay_sinh" type="date" format="dd/MM/yyyy" value-format="yyyy-MM-dd" placeholder="Ngày sinh" style="width: 100%;" />
           </el-col>
         </el-form-item>
         <el-form-item label="Dịch vụ khách hàng">
@@ -180,6 +186,7 @@ export default {
         phone: '',
         name: '',
         delivery: false,
+        nam_sinh: null,
       },
       lstDichVu: [],
       dv_id: '',
@@ -236,6 +243,7 @@ export default {
         return;
       }
       this.form.name = item.ten;
+      this.form.ngay_sinh = item.ngay_sinh;
     },
     handleSelectKH(value) {
     },

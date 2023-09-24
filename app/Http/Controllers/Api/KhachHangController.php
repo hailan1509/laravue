@@ -21,6 +21,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Validator;
+use DB;
 
 /**
  * Class UserController
@@ -50,25 +51,17 @@ class KhachHangController extends BaseController
 
     public function store(Request $request) {
         $id = $request->get("id","");
-        $ten = $request->get("ten_phong","");
-        $gia = $request->get("gia",0);
-        $type = $request->get("type",1);
+        $ten = $request->get("ten","");
+        $sdt = $request->get("sdt",0);
+        $ngay_sinh = $request->get("ngay_sinh","");
         
-        // dd($ten,$gia,$request->all());
+
 
         try {
 
-            if(empty($id)) {
-                // $query = Phong::insert(['ten_phong'=>$ten,'gia'=>$gia]);
-                $model = new KhachHang;
-                $model->ten_phong = $ten;
-                $model->gia = $gia;
-                $model->type = $type;
-                $model->save();
-                return response()->json(['message' => "Thành công !","success" => true,"id"=> $model->id]);
-            }
+            if(empty($id)) {}
             else {
-                $query = KhachHang::where('id',$id)->update(['ten_phong' => $ten,'gia'=>$gia]);
+                $query = KhachHang::where('id',$id)->update(['ten' => $ten,'sdt'=>$sdt,'ngay_sinh' => $ngay_sinh]);
             }
 
             return response()->json(['message' => "Thành công !","success" => true]);
@@ -76,6 +69,14 @@ class KhachHangController extends BaseController
         catch (\Exception $e){
             return response()->json(['message' => $e,"success" => false]);
         }
+    }
+
+    public function getForBirthDays(Request $request) {
+        $currentDate = now(); // Ngày hiện tại
+        $futureDate = now()->addDays(7); // Ngày sau 7 ngày
+        $customers = KhachHang::whereRaw("CONCAT(YEAR('$currentDate'),'-', DATE_FORMAT(ngay_sinh, '%m-%d')) BETWEEN  CONCAT(YEAR('$currentDate'),'-',DATE_FORMAT('$currentDate', '%m-%d')) AND CONCAT(YEAR('$currentDate'),'-',DATE_FORMAT(DATE_ADD('$currentDate', INTERVAL 7 DAY), '%m-%d'))")
+        ->get();
+        return response()->json(['data' => $customers], 200);
     }
 
     public function delete(Request $request) {

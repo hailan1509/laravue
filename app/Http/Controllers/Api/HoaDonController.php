@@ -65,6 +65,7 @@ class HoaDonController extends BaseController
 
         $name = $request->get('name', '');
         $phone = $request->get('phone', '');
+        $ngay_sinh = $request->get('ngay_sinh', '');
         $total = $request->get('total', '0');
         $delivery = $request->get('delivery', 'false');
         $data = $request->get('data', []);
@@ -72,11 +73,17 @@ class HoaDonController extends BaseController
             return response()->json(['message' => 'Tham số không đẩy đủ',"success" => false]);
         }
         $pass = false;
-        DB::transaction(function() use($name, $phone, $data, $delivery, $total, &$pass) {
+        DB::transaction(function() use($name, $phone, $data, $delivery, $total, &$pass, $ngay_sinh) {
             try {
-                $kh = KhachHang::where('sdt',$phone)->get();
-                if(count($kh) == 0) {
+                $kh = KhachHang::where('sdt',$phone)->first();
+                if(!$kh) {
                     KhachHang::create(['ten'=> $name, 'sdt' => $phone]);
+                }
+                else {
+                    if(!empty($ngay_sinh)) {
+                        $kh->ngay_sinh = $ngay_sinh;
+                        $kh->save();
+                    }
                 }
                 // HoaDon::create(['ten_khach_hang'=> $name, 'sdt' => $phone , 'tong_tien' => $total, 'chuyen_khoan' => $delivery == 'false' ? '0' : '1']);
                 $hoa_don_new = new HoaDon();
@@ -95,7 +102,7 @@ class HoaDonController extends BaseController
                 DB::commit();
             }
             catch (\Exception $e){
-                // dd($e);
+                dd($e);
                 DB::rollback();
                 return response()->json(['message' => $e,"success" => false]);
             }

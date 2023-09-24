@@ -8,6 +8,14 @@ export function fetchList(query) {
   });
 }
 
+export function listBirthDay(query) {
+  return request({
+    url: '/khachhang/birthday',
+    method: 'get',
+    params: query,
+  });
+}
+
 // export function fetchArticle(id) {
 //   return request({
 //     url: '/articles/' + id,
@@ -22,18 +30,18 @@ export function fetchList(query) {
 //   });
 // }
 
-// export function createPhong(data) {
-//   return request({
-//     url: '/phong/addOrEdit',
-//     method: 'post',
-//     data,
-//   });
-// }
+export function createKH(data) {
+  return request({
+    url: '/khachhang/store',
+    method: 'post',
+    data,
+  });
+}
 
-// export function deletePhong(data) {
-//   return request({
-//     url: '/phong/delete',
-//     method: 'post',
-//     data,
-//   });
-// }
+export function deleteKH(data) {
+  return request({
+    url: '/khachhang/delete',
+    method: 'post',
+    data,
+  });
+}
