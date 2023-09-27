@@ -81,6 +81,11 @@
           <el-switch v-model="form.delivery" />
         </el-form-item>
       </el-form>
+      <el-form v-if="form.delivery" label-width="200px">
+        <el-form-item label="Mã QR">
+          <img :src="returnQR()" alt="">
+        </el-form-item>
+      </el-form>
       <el-button type="primary" :disabled="!form.phone || newData.length == 0" style="width:100%" @click="save()">
         Tạo hóa đơn
       </el-button>
@@ -440,6 +445,9 @@ export default {
       }
 
       return string.replace(['mươi năm', 'mươi một'], ['mươi lăm', 'mươi mốt']);
+    },
+    returnQR() {
+      return 'https://api.vieqr.com/vietqr/VietinBank/106872726015/' + this.tongTien() + '/compact.jpg?NDck=Salon%20Bui%20Hiep%20Xin%20Cam%20On&FullName=SalonBuiHiep&1695820665';
     },
   },
 };
