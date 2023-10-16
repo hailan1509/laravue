@@ -53,5 +53,5 @@ export function convertDate(date) {
 export function convertDateFromTimestamp(date) {
   const arr_timestamp = date.split(' ');
   const tmp = new Date(arr_timestamp[0]);
-  return tmp.getDate() + '-' + (parseInt(tmp.getMonth()) + 1) + '-' + tmp.getFullYear() + ' ' + arr_timestamp[1];
+  return tmp.getDate() + '-' + (parseInt(tmp.getMonth()) + 1) + '-' + tmp.getFullYear() + ' ' + (arr_timestamp[1] ? arr_timestamp[1] : '');
 }

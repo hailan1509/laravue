@@ -49,7 +49,7 @@ class HoaDonController extends BaseController
             if(!empty($phone)) {
                 $query->where('sdt', $phone);
             }
-            $data = $query->get();
+            $data = $query->whereNull('deleted_at')->get();
             $total = 0;
             foreach($data as $key => $v) {
                 $data[$key]['chi_tiet'] = ChiTietHoaDon::where('ma_hoa_don', $v['id'])->get();
@@ -65,6 +65,7 @@ class HoaDonController extends BaseController
 
         $name = $request->get('name', '');
         $phone = $request->get('phone', '');
+        $ngay_sinh = $request->get('ngay_sinh', '');
         $total = $request->get('total', '0');
         $delivery = $request->get('delivery', 'false');
         $data = $request->get('data', []);
@@ -72,11 +73,17 @@ class HoaDonController extends BaseController
             return response()->json(['message' => 'Tham số không đẩy đủ',"success" => false]);
         }
         $pass = false;
-        DB::transaction(function() use($name, $phone, $data, $delivery, $total, &$pass) {
+        DB::transaction(function() use($name, $phone, $data, $delivery, $total, &$pass, $ngay_sinh) {
             try {
-                $kh = KhachHang::where('sdt',$phone)->get();
-                if(count($kh) == 0) {
+                $kh = KhachHang::where('sdt',$phone)->first();
+                if(!$kh) {
                     KhachHang::create(['ten'=> $name, 'sdt' => $phone]);
+                }
+                else {
+                    if(!empty($ngay_sinh)) {
+                        $kh->ngay_sinh = $ngay_sinh;
+                        $kh->save();
+                    }
                 }
                 // HoaDon::create(['ten_khach_hang'=> $name, 'sdt' => $phone , 'tong_tien' => $total, 'chuyen_khoan' => $delivery == 'false' ? '0' : '1']);
                 $hoa_don_new = new HoaDon();
@@ -88,14 +95,14 @@ class HoaDonController extends BaseController
                 $hoa_don_new->save();
                 $id_new = $hoa_don_new->id;            
                 foreach($data as $v) {
-                    $values = ['ma_hoa_don' => $id_new,'ma_dich_vu' => $v['id'], 'ten_dich_vu' => $v['ten_dich_vu_km'], 'gia' => $v['gia'], 'gia_khuyen_mai' => $v['gia_khuyen_mai'], 'soluong' => $v['soluong'], 'is_combo' => $v['is_combo'] ? 1 : 0, 'so_luong_combo' => $v['so_luong_combo'] * $v['soluong']];
+                    $values = ['ma_hoa_don' => $id_new,'ma_dich_vu' => $v['id'], 'ten_dich_vu' => $v['ten_dich_vu_km'], 'gia' => $v['gia'], 'gia_khuyen_mai' => $v['gia_khuyen_mai'], 'soluong' => $v['soluong'], 'is_combo' => $v['is_combo'] ? 1 : 0, 'so_luong_combo' => $v['so_luong_combo'] * $v['soluong'], 'so_luong_con_lai' => $v['so_luong_combo'] * $v['soluong']];
                     ChiTietHoaDon::create($values);
                 }
                 $pass = true;
                 DB::commit();
             }
             catch (\Exception $e){
-                // dd($e);
+                dd($e);
                 DB::rollback();
                 return response()->json(['message' => $e,"success" => false]);
             }
@@ -109,7 +116,7 @@ class HoaDonController extends BaseController
         $id = $request->get("id","");
         try{
             if(!empty($id)) {
-                $query = HoaDon::where('id',$id)->delete();
+                $query = HoaDon::where('id',$id)->update(['deleted_at' => Carbon::now()]);
             }
             return response()->json(['message' => "Thành công !","success" => true]);
         }catch (\Exception $ex) {

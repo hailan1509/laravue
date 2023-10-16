@@ -8,7 +8,7 @@
       </div>
       <el-form ref="form" :model="form" label-width="200px">
         <el-form-item label="Thông tin khách hàng">
-          <el-col :span="11">
+          <el-col :span="8">
             <v-select v-model="form.phone" :options="lstKhachHang" label="ten_kh" placeholder="Tìm kiếm khách hàng" :reduce="option => option.sdt" @input="handleInputKH" @select="handleSelectKH" />
             <!-- <el-input v-model="form.phone" placeholder="Số điện thoại" /> -->
           </el-col>
@@ -21,8 +21,14 @@
           <el-col :span="1">&nbsp;
             <!-- <el-input v-model="form.name" placeholder="Tên khách hàng" /> -->
           </el-col>
-          <el-col :span="5">
+          <el-col :span="4">
             <el-input v-model="form.phone" placeholder="Số điện thoại" />
+          </el-col>
+          <el-col :span="1">&nbsp;
+            <!-- <el-input v-model="form.name" placeholder="Tên khách hàng" /> -->
+          </el-col>
+          <el-col :span="3">
+            <el-date-picker v-model="form.ngay_sinh" type="date" format="dd/MM/yyyy" value-format="yyyy-MM-dd" placeholder="Ngày sinh" style="width: 100%;" />
           </el-col>
         </el-form-item>
         <el-form-item label="Dịch vụ khách hàng">
@@ -59,7 +65,7 @@
             <td>{{ item.ten_dich_vu_km }}</td>
             <td><el-input-number v-model="item.soluong" :min="min" placeholder="Số lượng" style="width: 100%" /></td>
             <td>{{ item.gia | toThousandFilter }}</td>
-            <td>{{ item.gia_khuyen_mai ? item.gia_khuyen_mai + '%' : '' }}</td>
+            <td><el-input-number v-model="item.gia_khuyen_mai" :min="min" placeholder="Chiết khấu" style="width: 100%" /></td>
             <td>{{ parseInt(item.gia_khuyen_mai) ? Math.floor((item.soluong * item.gia) - (item.soluong * item.gia) * parseInt(item.gia_khuyen_mai) / 100) : item.soluong * item.gia | toThousandFilter }}</td>
             <td><i class="el-icon-error" @click="deleteDV(item.id)" /></td>
           </tr>
@@ -73,6 +79,11 @@
       <el-form label-width="200px">
         <el-form-item label="Chuyển khoản">
           <el-switch v-model="form.delivery" />
+        </el-form-item>
+      </el-form>
+      <el-form v-if="form.delivery" label-width="200px">
+        <el-form-item label="Mã QR">
+          <img :src="returnQR()" alt="">
         </el-form-item>
       </el-form>
       <el-button type="primary" :disabled="!form.phone || newData.length == 0" style="width:100%" @click="save()">
@@ -92,7 +103,7 @@
         </el-row>
         <el-row class="line">
           <el-col :span="24">
-            <b>Điện thoại : 0928994636</b>
+            <b>Điện thoại : 0928994636 - 0931578820</b>
           </el-col>
         </el-row>
         <el-row class="line">
@@ -180,6 +191,7 @@ export default {
         phone: '',
         name: '',
         delivery: false,
+        nam_sinh: null,
       },
       lstDichVu: [],
       dv_id: '',
@@ -236,6 +248,7 @@ export default {
         return;
       }
       this.form.name = item.ten;
+      this.form.ngay_sinh = item.ngay_sinh;
     },
     handleSelectKH(value) {
     },
@@ -432,6 +445,9 @@ export default {
       }
 
       return string.replace(['mươi năm', 'mươi một'], ['mươi lăm', 'mươi mốt']);
+    },
+    returnQR() {
+      return 'https://api.vieqr.com/vietqr/VietinBank/106872726015/' + this.tongTien() + '/compact.jpg?NDck=Salon%20Bui%20Hiep%20Xin%20Cam%20On&FullName=SalonBuiHiep&1695820665';
     },
   },
 };

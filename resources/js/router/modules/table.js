@@ -42,6 +42,12 @@ const tableRoutes = {
       meta: { title: 'Quản lý hóa đơn' },
     },
     {
+      path: 'quan-ly-khach-hang',
+      component: () => import('@/views/table/QuanLyKhachHang'),
+      name: 'QuanLyKhachHang',
+      meta: { title: 'Quản lý khách hàng' },
+    },
+    {
       path: 'tao-hoa-don',
       component: () => import('@/views/table/TaoHoaDon'),
       name: 'TaoHoaDon',

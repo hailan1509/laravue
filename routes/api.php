@@ -55,7 +55,11 @@ Route::namespace('Api')->group(function() {
     Route::post('/HoaDon/delete','HoaDonController@delete' );
     Route::get('/khachhang/list','KhachHangController@index' );
     Route::get('/combo/list','ChiTietHoaDonController@index' );
+    Route::post('/combo/update','ChiTietHoaDonController@storeCombo' );
     Route::get('/khachhang/list','KhachHangController@index' );
+    Route::post('/khachhang/store','KhachHangController@store' );
+    Route::post('/khachhang/delete','KhachHangController@delete' );
+    Route::get('/khachhang/birthday','KhachHangController@getForBirthDays' );
 });
 
 

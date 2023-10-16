@@ -21,5 +21,8 @@ class HoaDon extends Model
         'chuyen_khoan',
         'tong_tien',
         'ngay',
+        'deleted_at',
+        'created_at',
+        'updated_at',
     ];
 }
